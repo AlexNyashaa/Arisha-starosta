@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Посещаемость">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<title>Для Аришы</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --primary-light: #eef2ff;
+    --bg: #f3f4f6;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --pink: #ec4899;
+    --nav-height: 64px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 16px);
+    -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (min-width: 769px) {
+    body { padding-bottom: 96px; }
+  }
+
+  header {
+    background: var(--primary);
+    color: white;
+    padding: calc(12px + var(--safe-top)) 20px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  header h1 { margin: 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  header .sub { font-size: 12px; opacity: 0.9; margin-top: 3px; line-height: 1.3; }
+  @media (min-width: 769px) {
+    header h1 { font-size: 20px; }
+    header .sub { font-size: 13px; }
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    z-index: 9999;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+  @media (min-width: 769px) {
+    .bottom-nav {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%) translateZ(0);
+      -webkit-transform: translateX(-50%) translateZ(0);
+      bottom: 16px;
+      max-width: 640px;
+      width: calc(100% - 32px);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      padding-bottom: 0;
+      overflow: hidden;
+    }
+  }
+  .bottom-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    transition: color 0.15s;
+    font-family: inherit;
+    font-size: 10px;
+    min-height: 56px;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+  }
+  .bottom-nav .nav-item:active { background: rgba(0,0,0,0.05); }
+  .bottom-nav .nav-item .nav-icon {
+    font-size: 22px;
+    line-height: 1;
+    transition: transform 0.15s;
+    pointer-events: none;
+  }
+  .bottom-nav .nav-item .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    pointer-events: none;
+  }
+  .bottom-nav .nav-item.active { color: var(--primary); }
+  .bottom-nav .nav-item.active .nav-icon { transform: scale(1.12); }
+  .bottom-nav .nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 0 0 3px 3px;
+    pointer-events: none;
+  }
+  @media (min-width: 769px) {
+    .bottom-nav .nav-item.active::before {
+      border-radius: 3px;
+      top: 2px;
+    }
+  }
+  .bottom-nav .nav-item .nav-badge {
+    position: absolute;
+    top: 6px;
+    right: calc(50% - 20px);
+    background: var(--pink);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 1px 5px;
+    min-width: 16px;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .tab-content { display: none; animation: fadeContent 0.2s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadeContent {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  input, select, textarea, button {
+    font-family: inherit;
+    font-size: 16px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--text);
+    width: 100%;
+    outline: none;
+    transition: 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  textarea { resize: vertical; min-height: 70px; line-height: 1.4; -webkit-appearance: none; }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+  button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  button:active:not(:disabled) { transform: scale(0.97); }
+  button.secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+  button.danger { background: var(--red); }
+  button.small { width: auto; padding: 10px 16px; font-size: 14px; }
+  .row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .row > * { flex: 1; }
+  .row.auto > * { flex: 0 0 auto; }
+  .field-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: block; font-weight: 600; }
+  .field-wrap { margin-bottom: 10px; }
+
+  .student-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: var(--card);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: 0.15s;
+    border: 1px solid transparent;
+  }
+  .student-item:active { background: #f9fafb; }
+  .student-item .student-main { flex: 1; min-width: 0; }
+  .student-item .name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .student-item .name { font-weight: 600; }
+  .student-item .meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .student-item .meta span { display: inline-flex; align-items: center; gap: 3px; }
+  .mini-pct {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 8px;
+    margin-right: 4px;
+    min-width: 52px;
+    text-align: center;
+    flex: 0 0 auto;
+  }
+  .pct-good { background: #d1fae5; color: #065f46; }
+  .pct-mid  { background: #fef3c7; color: #92400e; }
+  .pct-bad  { background: #fee2e2; color: #991b1b; }
+  .pct-none { background: var(--bg); color: var(--muted); }
+
+  .schedule-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: var(--card);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .schedule-item .info { flex: 1; font-weight: 500; }
+  .schedule-item .info small { display: block; color: var(--muted); font-weight: 400; font-size: 13px; margin-top: 2px; }
+  .icon-btn {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 18px;
+    padding: 0;
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    flex: 0 0 auto;
+  }
+  .icon-btn:hover { background: var(--bg); }
+
+  .attendance-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--card);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    gap: 10px;
+  }
+  .attendance-row .name { flex: 1; font-weight: 500; font-size: 15px; min-width: 0; }
+  .status-btns { display: flex; gap: 6px; flex-shrink: 0; }
+  .status-btn {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 0;
+    color: var(--muted);
+    min-width: 0;
+    transition: 0.15s;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .status-btn.present.active { background: var(--green); color: white; border-color: var(--green); }
+  .status-btn.late.active { background: var(--yellow); color: white; border-color: var(--yellow); }
+  .status-btn.absent.active { background: var(--red); color: white; border-color: var(--red); }
+
+  .empty { text-align: center; color: var(--muted); padding: 40px 20px; font-size: 14px; line-height: 1.5; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .stat { background: var(--card); border-radius: 12px; padding: 14px; text-align: center; }
+  .stat .num { font-size: 24px; font-weight: 700; }
+  .stat .label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .stat.green .num { color: var(--green); }
+  .stat.yellow .num { color: var(--yellow); }
+  .stat.red .num { color: var(--red); }
+  .date-input { margin-bottom: 12px; }
+
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--card);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .history-item .date { font-weight: 600; }
+  .history-item .summary { font-size: 13px; color: var(--muted); }
+  .history-item .expand { font-size: 18px; color: var(--muted); }
+  .history-details { padding: 8px 12px; background: #f9fafb; border-radius: 12px; margin: -4px 0 8px; font-size: 14px; display: none; }
+  .history-details.open { display: block; }
+  .history-details .row-line { padding: 8px 0; display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .history-details .row-line:last-child { border-bottom: none; }
+  .history-details .pct-inline { font-size: 12px; color: var(--muted); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .badge.present { background: #d1fae5; color: #065f46; }
+  .badge.late { background: #fef3c7; color: #92400e; }
+  .badge.absent { background: #fee2e2; color: #991b1b; }
+
+  .toast {
+    position: fixed;
+    bottom: calc(var(--nav-height) + var(--safe-bottom) + 20px);
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    background: #1f2937;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    opacity: 0;
+    transition: 0.3s;
+    z-index: 10000;
+    pointer-events: none;
+    max-width: calc(100vw - 32px);
+    text-align: center;
+  }
+  @media (min-width: 769px) {
+    .toast { bottom: 100px; }
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .export-btn { margin-top: 8px; }
+
+  .pct-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .pct-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 12px;
+  }
+  .pct-card-name { font-weight: 600; font-size: 16px; }
+  .pct-card-value { font-size: 22px; font-weight: 700; }
+  .pct-bar {
+    height: 10px;
+    background: var(--bg);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .pct-bar-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 6px;
+    transition: width 0.4s;
+  }
+  .pct-bar-fill.mid { background: var(--yellow); }
+  .pct-bar-fill.bad { background: var(--red); }
+  .pct-breakdown {
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot.green { background: var(--green); }
+  .dot.yellow { background: var(--yellow); }
+  .dot.red { background: var(--red); }
+  .sort-select { max-width: 220px; padding: 10px 12px; font-size: 14px; }
+  .filters { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+
+  .modal-backdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 20000;
+    padding: 0;
+    animation: fadeIn 0.15s;
+  }
+  .modal-backdrop.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: white;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px calc(20px + var(--safe-bottom));
+    max-width: 480px;
+    width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: slideUp 0.25s ease;
+  }
+  @media (min-width: 769px) {
+    .modal-backdrop { align-items: center; padding: 20px; }
+    .modal { border-radius: 16px; padding: 24px; }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .modal-head h3 { margin: 0; font-size: 18px; flex: 1; min-width: 0; }
+  .modal-close {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--muted);
+    font-size: 18px;
+    padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    border: none;
+    min-width: 36px;
+    flex: 0 0 auto;
+    touch-action: manipulation;
+  }
+  .info-block {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .info-block .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
+  .info-block .val { font-size: 15px; font-weight: 500; word-break: break-word; white-space: pre-wrap; }
+  .info-block .val.empty-val { color: var(--muted); font-style: italic; font-weight: 400; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .modal-actions button { flex: 1; }
+  .bd-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #fce7f3;
+    color: #9f1239;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .search-wrap { position: relative; margin-bottom: 12px; }
+  .search-wrap input { padding-left: 40px; }
+  .search-wrap::before {
+    content: '🔍';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @media (max-width: 380px) {
+    .status-btn { width: 40px; height: 40px; font-size: 16px; }
+    .attendance-row { padding: 8px 10px; gap: 6px; }
+    .attendance-row .name { font-size: 14px; }
+    .bottom-nav .nav-item .nav-icon { font-size: 20px; }
+    .bottom-nav .nav-item .nav-label { font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📚 Учёт посещаемости</h1>
+  <div class="sub" id="headerSub">Загрузка...</div>
+</header>
+
+<div class="container">
+
+  <!-- ATTENDANCE -->
+  <div class="tab-content active" id="tab-attendance">
+    <div class="card">
+      <div class="date-input">
+        <label class="field-label">Дата</label>
+        <input type="date" id="attendanceDate">
+      </div>
+      <div class="date-input">
+        <label class="field-label">Занятие (из расписания)</label>
+        <select id="lessonSelect"></select>
+      </div>
+      <div id="attendanceStats" class="stats" style="display:none;">
+        <div class="stat green"><div class="num" id="statPresent">0</div><div class="label">Присутств.</div></div>
+        <div class="stat yellow"><div class="num" id="statLate">0</div><div class="label">Опоздали</div></div>
+        <div class="stat red"><div class="num" id="statAbsent">0</div><div class="label">Отсутств.</div></div>
+      </div>
+      <div class="row auto">
+        <button type="button" class="secondary small" onclick="markAll('present')">Все присутств.</button>
+        <button type="button" class="secondary small" onclick="clearMarks()">Сбросить</button>
+      </div>
+    </div>
+    <div id="attendanceList"></div>
+  </div>
+
+  <!-- STUDENTS -->
+  <div class="tab-content" id="tab-students">
+    <div class="card">
+      <div class="row">
+        <input type="text" id="studentName" placeholder="Имя и фамилия *" autocomplete="off">
+      </div>
+      <div class="row">
+        <div class="field-wrap" style="margin-bottom:0;">
+          <label class="field-label">Дата рождения</label>
+          <input type="date" id="studentBirthday">
+        </div>
+        <div class="field-wrap" style="margin-bottom:0;">
+          <label class="field-label">Телефон</label>
+          <input type="tel" id="studentPhone" placeholder="+7 999 123-45-67" autocomplete="off">
+        </div>
+      </div>
+      <div class="field-wrap" style="margin-top:10px;">
+        <label class="field-label">Комментарий</label>
+        <textarea id="studentNote" placeholder="Заметки о студенте..."></textarea>
+      </div>
+      <button type="button" onclick="addStudent()">Добавить студента</button>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="studentSearch" placeholder="Поиск по имени, телефону, комментарию..." oninput="renderStudents()">
+    </div>
+    <div class="filters">
+      <select class="sort-select" id="studentSort" onchange="renderStudents()">
+        <option value="name">По имени (А-Я)</option>
+        <option value="birthday-upcoming">По ближайшему ДР</option>
+        <option value="birthday">По дате рождения</option>
+        <option value="pct-asc">По посещаемости (↓)</option>
+      </select>
+    </div>
+    <div id="studentsList"></div>
+  </div>
+
+  <!-- PERCENT -->
+  <div class="tab-content" id="tab-percent">
+    <div class="card">
+      <div class="filters">
+        <select class="sort-select" id="pctSort" onchange="renderPercent()">
+          <option value="name">По имени (А-Я)</option>
+          <option value="pct-desc">По посещаемости (↑)</option>
+          <option value="pct-asc">По посещаемости (↓)</option>
+          <option value="absences">По пропускам</option>
+        </select>
+        <select class="sort-select" id="pctPeriod" onchange="renderPercent()">
+          <option value="all">За всё время</option>
+          <option value="30">За 30 дней</option>
+          <option value="7">За 7 дней</option>
+        </select>
+      </div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;">
+        Формула: <b>присутствие</b> = 100%, <b>опоздание</b> = 50%, <b>отсутствие</b> = 0%.
+      </div>
+    </div>
+    <div id="percentList"></div>
+  </div>
+
+  <!-- SCHEDULE -->
+  <div class="tab-content" id="tab-schedule">
+    <div class="card">
+      <div class="row">
+        <input type="text" id="lessonName" placeholder="Название занятия" autocomplete="off">
+      </div>
+      <div class="row">
+        <input type="text" id="lessonTime" placeholder="Время (напр. 09:00–10:30)">
+        <select id="lessonDay">
+          <option value="1">Пн</option>
+          <option value="2">Вт</option>
+          <option value="3">Ср</option>
+          <option value="4">Чт</option>
+          <option value="5">Пт</option>
+          <option value="6">Сб</option>
+          <option value="0">Вс</option>
+        </select>
+      </div>
+      <button type="button" onclick="addLesson()">+ Добавить занятие</button>
+    </div>
+    <div id="scheduleList"></div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="tab-content" id="tab-history">
+    <div class="card">
+      <button type="button" class="secondary" onclick="exportJSON()">📥 Экспорт данных (JSON)</button>
+      <button type="button" class="secondary export-btn" onclick="exportCSV()">📊 Экспорт студентов (CSV)</button>
+      <button type="button" class="secondary export-btn" onclick="document.getElementById('importFile').click()">📤 Импорт данных</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+      <button type="button" class="danger export-btn" onclick="clearAllData()">🗑 Удалить все данные</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+</div>
+
+<!-- ЕДИНСТВЕННАЯ НАВИГАЦИЯ — СНИЗУ -->
+<nav class="bottom-nav" id="bottomNav">
+  <button type="button" class="nav-item active" data-tab="attendance"><span class="nav-icon">✅</span><span class="nav-label">Отметки</span></button>
+  <button type="button" class="nav-item" data-tab="students"><span class="nav-icon">👥</span><span class="nav-label">Студенты</span></button>
+  <button type="button" class="nav-item" data-tab="percent"><span class="nav-icon">📊</span><span class="nav-label">Проценты</span></button>
+  <button type="button" class="nav-item" data-tab="schedule"><span class="nav-icon">📅</span><span class="nav-label">Расписание</span></button>
+  <button type="button" class="nav-item" data-tab="history"><span class="nav-icon">📜</span><span class="nav-label">История</span></button>
+</nav>
+
+<div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== Настройки =====
+const LATE_WEIGHT = 0.5;
+const PCT_GOOD = 80;
+const PCT_MID = 60;
+
+// ===== IndexedDB =====
+const DB_NAME = 'attendance_db';
+const DB_VERSION = 1;
+let db;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('students')) {
+        d.createObjectStore('students', { keyPath: 'id', autoIncrement: true });
+      }
+      if (!d.objectStoreNames.contains('lessons')) {
+        d.createObjectStore('lessons', { keyPath: 'id', autoIncrement: true });
+      }
+      if (!d.objectStoreNames.contains('attendance')) {
+        const store = d.createObjectStore('attendance', { keyPath: 'id', autoIncrement: true });
+        store.createIndex('date', 'date', { unique: false });
+      }
+    };
+    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function getAll(store) {
+  return new Promise((resolve, reject) => {
+    const t = db.transaction(store, 'readonly');
+    const req = t.objectStore(store).getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function add(store, obj) {
+  return new Promise((resolve, reject) => {
+    const t = db.transaction(store, 'readwrite');
+    const req = t.objectStore(store).add(obj);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function put(store, obj) {
+  return new Promise((resolve, reject) => {
+    const t = db.transaction(store, 'readwrite');
+    const req = t.objectStore(store).put(obj);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function del(store, id) {
+  return new Promise((resolve, reject) => {
+    const t = db.transaction(store, 'readwrite');
+    const req = t.objectStore(store).delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+function clearStore(store) {
+  return new Promise((resolve, reject) => {
+    const t = db.transaction(store, 'readwrite');
+    const req = t.objectStore(store).clear();
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+// ===== State =====
+let students = [];
+let lessons = [];
+let currentMarks = {};
+let attendanceCache = [];
+let currentTab = 'attendance';
+
+// ===== Init =====
+async function init() {
+  await openDB();
+  await loadAll();
+  setupNav();
+  setupInputs();
+  renderLessonSelect();
+  renderAll();
+}
+
+async function loadAll() {
+  students = await getAll('students');
+  lessons = await getAll('lessons');
+  attendanceCache = await getAll('attendance');
+}
+
+// ===== NAVIGATION =====
+function setupNav() {
+  let lastTapTime = 0;
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    const handler = (e) => {
+      const now = Date.now();
+      if (now - lastTapTime < 350) return;
+      lastTapTime = now;
+      if (e && e.cancelable) e.preventDefault();
+      const tab = btn.dataset.tab;
+      if (!tab) return;
+      switchTab(tab);
+    };
+    btn.addEventListener('touchend', handler, { passive: false });
+    btn.addEventListener('click', handler);
+  });
+  updateNavBadges();
+}
+
+function switchTab(tab) {
+  if (currentTab === tab) return;
+  currentTab = tab;
+
+  document.querySelectorAll('.nav-item').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => {
+    c.classList.toggle('active', c.id === 'tab-' + tab);
+  });
+
+  if (tab === 'percent') renderPercent();
+  if (tab === 'students') renderStudents();
+  if (tab === 'history') renderHistory();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (navigator.vibrate) {
+    try { navigator.vibrate(10); } catch(e) {}
+  }
+}
+
+function updateNavBadges() {
+  const bdays = students.filter(s => isBirthdayToday(s.birthday)).length;
+  document.querySelectorAll('.nav-badge').forEach(b => b.remove());
+  if (bdays > 0) {
+    document.querySelectorAll('.nav-item[data-tab="students"]').forEach(btn => {
+      const badge = document.createElement('span');
+      badge.className = 'nav-badge';
+      badge.textContent = bdays;
+      btn.appendChild(badge);
+    });
+  }
+}
+
+function setupInputs() {
+  const dateInput = document.getElementById('attendanceDate');
+  const today = new Date().toISOString().slice(0, 10);
+  dateInput.value = today;
+  dateInput.onchange = loadMarksForDate;
+  document.getElementById('lessonSelect').onchange = loadMarksForDate;
+
+  document.getElementById('studentName').addEventListener('keypress', e => {
+    if (e.key === 'Enter') addStudent();
+  });
+  document.getElementById('lessonName').addEventListener('keypress', e => {
+    if (e.key === 'Enter') addLesson();
+  });
+}
+
+// ===== Расчёт посещаемости =====
+function calcPercent(studentId, opts = {}) {
+  const { periodDays = 0 } = opts;
+  let minTs = 0;
+  if (periodDays > 0) {
+    const d = new Date();
+    d.setDate(d.getDate() - periodDays);
+    minTs = d.getTime();
+  }
+
+  const recs = attendanceCache.filter(a => {
+    if (a.studentId !== studentId) return false;
+    if (minTs && a.date) {
+      const t = new Date(a.date + 'T00:00:00').getTime();
+      if (t < minTs) return false;
+    }
+    return true;
+  });
+
+  const total = recs.length;
+  const present = recs.filter(r => r.status === 'present').length;
+  const late = recs.filter(r => r.status === 'late').length;
+  const absent = recs.filter(r => r.status === 'absent').length;
+
+  if (total === 0) return { pct: null, total: 0, present: 0, late: 0, absent: 0 };
+
+  const score = present * 1 + late * LATE_WEIGHT;
+  const pct = Math.round((score / total) * 100);
+  return { pct, total, present, late, absent };
+}
+
+function pctClass(pct) {
+  if (pct === null) return 'pct-none';
+  if (pct >= PCT_GOOD) return 'pct-good';
+  if (pct >= PCT_MID) return 'pct-mid';
+  return 'pct-bad';
+}
+
+function pctBarClass(pct) {
+  if (pct === null) return '';
+  if (pct >= PCT_GOOD) return '';
+  if (pct >= PCT_MID) return 'mid';
+  return 'bad';
+}
+
+// ===== Возраст и ДР =====
+function calcAge(birthday) {
+  if (!birthday) return null;
+  const bd = new Date(birthday + 'T00:00:00');
+  if (isNaN(bd)) return null;
+  const now = new Date();
+  let age = now.getFullYear() - bd.getFullYear();
+  const m = now.getMonth() - bd.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < bd.getDate())) age--;
+  return age;
+}
+
+function isBirthdayToday(birthday) {
+  if (!birthday) return false;
+  const bd = new Date(birthday + 'T00:00:00');
+  if (isNaN(bd)) return false;
+  const now = new Date();
+  return bd.getDate() === now.getDate() && bd.getMonth() === now.getMonth();
+}
+
+function daysUntilBirthday(birthday) {
+  if (!birthday) return Infinity;
+  const bd = new Date(birthday + 'T00:00:00');
+  if (isNaN(bd)) return Infinity;
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  const next = new Date(now.getFullYear(), bd.getMonth(), bd.getDate());
+  if (next < now) next.setFullYear(now.getFullYear() + 1);
+  return Math.round((next - now) / (1000 * 60 * 60 * 24));
+}
+
+function formatBirthday(birthday) {
+  if (!birthday) return '';
+  const bd = new Date(birthday + 'T00:00:00');
+  if (isNaN(bd)) return birthday;
+  const months = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+  return `${bd.getDate()} ${months[bd.getMonth()]} ${bd.getFullYear()}`;
+}
+
+// ===== RENDER =====
+function renderAll() {
+  renderStudents();
+  renderSchedule();
+  renderAttendance();
+  renderPercent();
+  renderHistory();
+  updateHeader();
+  updateNavBadges();
+}
+
+function updateHeader() {
+  const today = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+  const todayLessons = lessons.filter(l => l.day == new Date().getDay()).length;
+  const bdays = students.filter(s => isBirthdayToday(s.birthday)).length;
+  let sub = `${today} · ${students.length} студ. · ${todayLessons} занятий`;
+  if (bdays > 0) sub += ` · 🎂 ${bdays}`;
+  document.getElementById('headerSub').textContent = sub;
+}
+
+function renderStudents() {
+  const el = document.getElementById('studentsList');
+  const search = (document.getElementById('studentSearch').value || '').trim().toLowerCase();
+  const sort = document.getElementById('studentSort').value;
+
+  let list = [...students];
+
+  if (search) {
+    list = list.filter(s => {
+      const blob = [s.name || '', s.phone || '', s.note || '', s.birthday || ''].join(' ').toLowerCase();
+      return blob.includes(search);
+    });
+  }
+
+  if (sort === 'name') {
+    list.sort((a,b) => (a.name || '').localeCompare(b.name || '', 'ru'));
+  } else if (sort === 'birthday') {
+    list.sort((a,b) => {
+      if (!a.birthday && !b.birthday) return (a.name || '').localeCompare(b.name || '', 'ru');
+      if (!a.birthday) return 1;
+      if (!b.birthday) return -1;
+      return a.birthday.localeCompare(b.birthday);
+    });
+  } else if (sort === 'birthday-upcoming') {
+    list.sort((a,b) => daysUntilBirthday(a.birthday) - daysUntilBirthday(b.birthday));
+  } else if (sort === 'pct-asc') {
+    list.sort((a,b) => {
+      const pa = calcPercent(a.id).pct ?? 101;
+      const pb = calcPercent(b.id).pct ?? 101;
+      return pa - pb;
+    });
+  }
+
+  if (students.length === 0) {
+    el.innerHTML = '<div class="empty">Пока нет студентов.<br>Добавьте первого выше ☝️</div>';
+    return;
+  }
+  if (list.length === 0) {
+    el.innerHTML = '<div class="empty">Никого не найдено по запросу</div>';
+    return;
+  }
+
+  el.innerHTML = list.map(s => {
+    const { pct } = calcPercent(s.id);
+    const pctText = pct === null ? '—' : pct + '%';
+    const age = calcAge(s.birthday);
+    const bdToday = isBirthdayToday(s.birthday);
+
+    const metaParts = [];
+    if (s.birthday) {
+      const ageStr = age !== null ? ` (${age})` : '';
+      metaParts.push(`<span>🎂 ${formatBirthday(s.birthday)}${ageStr}</span>`);
+    }
+    if (s.phone) {
+      metaParts.push(`<span>📞 ${escapeHtml(s.phone)}</span>`);
+    }
+    if (s.note) {
+      const short = s.note.length > 40 ? s.note.slice(0,40) + '…' : s.note;
+      metaParts.push(`<span>💬 ${escapeHtml(short)}</span>`);
+    }
+
+    return `
+      <div class="student-item" onclick="openStudentCard(${s.id})">
+        <div class="student-main">
+          <div class="name-row">
+            <div class="name">${escapeHtml(s.name)}</div>
+            ${bdToday ? '<span class="bd-badge">🎂 Сегодня!</span>' : ''}
+          </div>
+          ${metaParts.length ? `<div class="meta">${metaParts.join('')}</div>` : ''}
+        </div>
+        <div class="mini-pct ${pctClass(pct)}">${pctText}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderSchedule() {
+  const el = document.getElementById('scheduleList');
+  if (lessons.length === 0) {
+    el.innerHTML = '<div class="empty">Нет занятий в расписании</div>';
+    return;
+  }
+  const dayNames = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  const sorted = [...lessons].sort((a,b) => a.day - b.day || a.time.localeCompare(b.time));
+  el.innerHTML = sorted.map(l => `
+    <div class="schedule-item">
+      <div class="info">
+        ${escapeHtml(l.name)}
+        <small>${dayNames[l.day]} · ${escapeHtml(l.time || '—')}</small>
+      </div>
+      <button type="button" class="icon-btn" onclick="event.stopPropagation();removeLesson(${l.id})">🗑</button>
+    </div>
+  `).join('');
+}
+
+// Пересобирает опции селекта, СОХРАНЯЯ выбранное значение
+function renderLessonSelect() {
+  const sel = document.getElementById('lessonSelect');
+  const prevValue = sel.value;
+
+  const date = document.getElementById('attendanceDate').value;
+  const dayOfWeek = date ? new Date(date + 'T00:00:00').getDay() : new Date().getDay();
+  const dayLessons = lessons.filter(l => l.day == dayOfWeek);
+
+  let html = '<option value="">— без привязки к занятию —</option>';
+  if (dayLessons.length > 0) {
+    html += '<optgroup label="Занятия на этот день">';
+    html += dayLessons.map(l => `<option value="${l.id}">${escapeHtml(l.name)} ${l.time ? '· ' + escapeHtml(l.time) : ''}</option>`).join('');
+    html += '</optgroup>';
+  }
+  const otherLessons = lessons.filter(l => l.day != dayOfWeek);
+  if (otherLessons.length > 0) {
+    html += '<optgroup label="Другие занятия">';
+    html += otherLessons.map(l => {
+      const dn = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][l.day];
+      return `<option value="${l.id}">${dn} · ${escapeHtml(l.name)} ${l.time ? '· ' + escapeHtml(l.time) : ''}</option>`;
+    }).join('');
+    html += '</optgroup>';
+  }
+  sel.innerHTML = html;
+
+  if (prevValue) {
+    const exists = Array.from(sel.options).some(o => o.value === prevValue);
+    if (exists) sel.value = prevValue;
+  }
+}
+
+function renderAttendance() {
+  const el = document.getElementById('attendanceList');
+  if (students.length === 0) {
+    el.innerHTML = '<div class="empty">Сначала добавьте студентов во вкладке «Студенты»</div>';
+    document.getElementById('attendanceStats').style.display = 'none';
+    return;
+  }
+  el.innerHTML = students.map(s => {
+    const status = currentMarks[s.id] || '';
+    const { pct } = calcPercent(s.id);
+    const pctText = pct === null ? '' : `<span class="mini-pct ${pctClass(pct)}" style="font-size:11px;padding:2px 7px;margin-left:6px;min-width:44px;">${pct}%</span>`;
+    const bd = isBirthdayToday(s.birthday) ? ' 🎂' : '';
+    return `
+      <div class="attendance-row">
+        <div class="name">${escapeHtml(s.name)}${bd}${pctText}</div>
+        <div class="status-btns">
+          <button type="button" class="status-btn present ${status === 'present' ? 'active' : ''}"
+            onclick="setMark(${s.id}, 'present')" title="Присутствует">✓</button>
+          <button type="button" class="status-btn late ${status === 'late' ? 'active' : ''}"
+            onclick="setMark(${s.id}, 'late')" title="Опоздал">⏰</button>
+          <button type="button" class="status-btn absent ${status === 'absent' ? 'active' : ''}"
+            onclick="setMark(${s.id}, 'absent')" title="Отсутствует">✗</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  updateStats();
+}
+
+function updateStats() {
+  const vals = Object.values(currentMarks);
+  const p = vals.filter(v => v === 'present').length;
+  const l = vals.filter(v => v === 'late').length;
+  const a = vals.filter(v => v === 'absent').length;
+  document.getElementById('statPresent').textContent = p;
+  document.getElementById('statLate').textContent = l;
+  document.getElementById('statAbsent').textContent = a;
+  const stats = document.getElementById('attendanceStats');
+  stats.style.display = vals.length > 0 ? 'grid' : 'none';
+}
+
+function renderPercent() {
+  const el = document.getElementById('percentList');
+  if (!el) return;
+  if (students.length === 0) {
+    el.innerHTML = '<div class="empty">Сначала добавьте студентов</div>';
+    return;
+  }
+  const sort = document.getElementById('pctSort').value;
+  const period = parseInt(document.getElementById('pctPeriod').value) || 0;
+
+  let rows = students.map(s => {
+    const r = calcPercent(s.id, { periodDays: period });
+    return { student: s, ...r };
+  });
+
+  if (sort === 'name') {
+    rows.sort((a,b) => a.student.name.localeCompare(b.student.name, 'ru'));
+  } else if (sort === 'pct-desc') {
+    rows.sort((a,b) => (b.pct ?? -1) - (a.pct ?? -1));
+  } else if (sort === 'pct-asc') {
+    rows.sort((a,b) => (a.pct ?? 101) - (b.pct ?? 101));
+  } else if (sort === 'absences') {
+    rows.sort((a,b) => b.absent - a.absent || b.late - a.late);
+  }
+
+  const withData = rows.filter(r => r.total > 0);
+  const avgPct = withData.length
+    ? Math.round(withData.reduce((s, r) => s + r.pct, 0) / withData.length)
+    : null;
+  const atRisk = rows.filter(r => r.total > 0 && r.pct < PCT_MID).length;
+
+  let summaryHtml = `
+    <div class="stats" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat">
+        <div class="num">${students.length}</div>
+        <div class="label">Студентов</div>
+      </div>
+      <div class="stat ${avgPct === null ? '' : (avgPct >= PCT_GOOD ? 'green' : avgPct >= PCT_MID ? 'yellow' : 'red')}">
+        <div class="num">${avgPct === null ? '—' : avgPct + '%'}</div>
+        <div class="label">Средняя</div>
+      </div>
+      <div class="stat ${atRisk > 0 ? 'red' : 'green'}">
+        <div class="num">${atRisk}</div>
+        <div class="label">В зоне риска</div>
+      </div>
+    </div>
+  `;
+
+  if (withData.length === 0) {
+    el.innerHTML = summaryHtml + '<div class="empty">Пока нет отмеченных занятий за выбранный период</div>';
+    return;
+  }
+
+  const cards = rows.map(r => {
+    if (r.total === 0) {
+      return `
+        <div class="pct-card" onclick="openStudentCard(${r.student.id})" style="cursor:pointer;">
+          <div class="pct-card-head">
+            <div class="pct-card-name">${escapeHtml(r.student.name)}</div>
+            <div class="pct-card-value" style="color:var(--muted);font-size:18px;">—</div>
+          </div>
+          <div style="font-size:13px;color:var(--muted);">Нет данных</div>
+        </div>
+      `;
+    }
+    const cls = r.pct >= PCT_GOOD ? 'green' : r.pct >= PCT_MID ? 'yellow' : 'red';
+    return `
+      <div class="pct-card" onclick="openStudentCard(${r.student.id})" style="cursor:pointer;">
+        <div class="pct-card-head">
+          <div class="pct-card-name">${escapeHtml(r.student.name)}</div>
+          <div class="pct-card-value" style="color:var(--${cls});">${r.pct}%</div>
+        </div>
+        <div class="pct-bar">
+          <div class="pct-bar-fill ${pctBarClass(r.pct)}" style="width:${r.pct}%;"></div>
+        </div>
+        <div class="pct-breakdown">
+          <span><span class="dot green"></span> ${r.present} присутств.</span>
+          <span><span class="dot yellow"></span> ${r.late} опоздал</span>
+          <span><span class="dot red"></span> ${r.absent} отсутств.</span>
+          <span style="margin-left:auto;">Всего: ${r.total}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  el.innerHTML = summaryHtml + cards;
+}
+
+async function renderHistory() {
+  const all = attendanceCache;
+  const el = document.getElementById('historyList');
+  if (all.length === 0) {
+    el.innerHTML = '<div class="empty">История пуста</div>';
+    return;
+  }
+  const groups = {};
+  all.forEach(a => {
+    const key = a.date + '|' + (a.lessonId || '');
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(a);
+  });
+  const keys = Object.keys(groups).sort().reverse();
+  const dayNames = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  el.innerHTML = keys.map(k => {
+    const [date, lessonId] = k.split('|');
+    const recs = groups[k];
+    const lesson = lessons.find(l => l.id == lessonId);
+    const p = recs.filter(r => r.status === 'present').length;
+    const l = recs.filter(r => r.status === 'late').length;
+    const a = recs.filter(r => r.status === 'absent').length;
+    const dateObj = new Date(date + 'T00:00:00');
+    const dateStr = dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+    const dayStr = dayNames[dateObj.getDay()];
+    const gid = 'h_' + k.replace(/[^a-z0-9]/gi, '_');
+    return `
+      <div class="history-item" onclick="toggleHistory('${gid}')">
+        <div>
+          <div class="date">${dayStr}, ${dateStr}${lesson ? ' · ' + escapeHtml(lesson.name) : ''}</div>
+          <div class="summary">✓ ${p} · ⏰ ${l} · ✗ ${a}</div>
+        </div>
+        <div class="expand">▾</div>
+      </div>
+      <div class="history-details" id="${gid}">
+        ${recs.map(r => {
+          const s = students.find(st => st.id === r.studentId);
+          const badgeTxt = r.status === 'present' ? 'Присут.' : r.status === 'late' ? 'Опоздал' : 'Отсут.';
+          const { pct } = calcPercent(r.studentId);
+          const pctText = pct === null ? '' : `<span class="pct-inline">общий: ${pct}%</span>`;
+          return `<div class="row-line"><span>${s ? escapeHtml(s.name) : '(удалён)'} ${pctText}</span><span class="badge ${r.status}">${badgeTxt}</span></div>`;
+        }).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleHistory(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ===== MODAL =====
+let editingStudentId = null;
+
+function openStudentCard(id) {
+  editingStudentId = null;
+  const s = students.find(x => x.id === id);
+  if (!s) return;
+
+  const age = calcAge(s.birthday);
+  const { pct, total, present, late, absent } = calcPercent(s.id);
+  const bdToday = isBirthdayToday(s.birthday);
+  const daysBd = daysUntilBirthday(s.birthday);
+
+  const pctColor = pct === null ? 'var(--muted)' : pct >= PCT_GOOD ? 'var(--green)' : pct >= PCT_MID ? 'var(--yellow)' : 'var(--red)';
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-head">
+      <h3>${escapeHtml(s.name)} ${bdToday ? '🎂' : ''}</h3>
+      <button type="button" class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="info-block">
+      <div class="lbl">Дата рождения</div>
+      <div class="val ${s.birthday ? '' : 'empty-val'}">
+        ${s.birthday ? `${formatBirthday(s.birthday)}${age !== null ? ' · ' + age + ' лет' : ''}${bdToday ? ' 🎂 Сегодня!' : (daysBd < 30 ? ' · через ' + daysBd + ' дн.' : '')}` : 'Не указана'}
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="lbl">Телефон</div>
+      <div class="val ${s.phone ? '' : 'empty-val'}">
+        ${s.phone ? `<a href="tel:${escapeHtml(s.phone.replace(/[^+\d]/g, ''))}" style="color:var(--primary);text-decoration:none;">${escapeHtml(s.phone)}</a>` : 'Не указан'}
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="lbl">Комментарий</div>
+      <div class="val ${s.note ? '' : 'empty-val'}">${s.note ? escapeHtml(s.note) : 'Нет комментария'}</div>
+    </div>
+
+    <div class="info-block">
+      <div class="lbl">Посещаемость</div>
+      <div class="val" style="color:${pctColor};font-size:20px;font-weight:700;">
+        ${pct === null ? '—' : pct + '%'}
+      </div>
+      <div style="font-size:13px;color:var(--muted);margin-top:6px;">
+        Всего занятий: <b>${total}</b> · ✓ ${present} · ⏰ ${late} · ✗ ${absent}
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="secondary" onclick="editStudent(${s.id})">✏️ Редактировать</button>
+      <button type="button" class="danger" onclick="removeStudentFromCard(${s.id})">🗑 Удалить</button>
+    </div>
+  `;
+  document.getElementById('modalBackdrop').classList.add('show');
+}
+
+function editStudent(id) {
+  editingStudentId = id;
+  const s = students.find(x => x.id === id);
+  if (!s) return;
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-head">
+      <h3>Редактирование</h3>
+      <button type="button" class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="field-wrap">
+      <label class="field-label">Имя и фамилия *</label>
+      <input type="text" id="editName" value="${escapeHtml(s.name)}">
+    </div>
+
+    <div class="field-wrap">
+      <label class="field-label">Дата рождения</label>
+      <input type="date" id="editBirthday" value="${s.birthday || ''}">
+    </div>
+
+    <div class="field-wrap">
+      <label class="field-label">Телефон</label>
+      <input type="tel" id="editPhone" value="${escapeHtml(s.phone || '')}" placeholder="+7 999 123-45-67">
+    </div>
+
+    <div class="field-wrap">
+      <label class="field-label">Комментарий</label>
+      <textarea id="editNote" placeholder="Заметки о студенте...">${escapeHtml(s.note || '')}</textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="secondary" onclick="openStudentCard(${s.id})">Отмена</button>
+      <button type="button" onclick="saveStudentEdit(${s.id})">💾 Сохранить</button>
+    </div>
+  `;
+}
+
+async function saveStudentEdit(id) {
+  const s = students.find(x => x.id === id);
+  if (!s) return;
+
+  const name = document.getElementById('editName').value.trim();
+  if (!name) { toast('Имя не может быть пустым'); return; }
+
+  s.name = name;
+  s.birthday = document.getElementById('editBirthday').value || '';
+  s.phone = document.getElementById('editPhone').value.trim();
+  s.note = document.getElementById('editNote').value.trim();
+
+  await put('students', s);
+  students = await getAll('students');
+  renderAll();
+  closeModal();
+  toast('Сохранено');
+}
+
+async function removeStudentFromCard(id) {
+  const s = students.find(x => x.id === id);
+  if (!s) return;
+  if (!confirm(`Удалить студента "${s.name}"?\nВсе отметки также будут удалены.`)) return;
+  await del('students', id);
+  const all = await getAll('attendance');
+  for (const a of all) if (a.studentId === id) await del('attendance', a.id);
+  students = await getAll('students');
+  attendanceCache = await getAll('attendance');
+  closeModal();
+  renderAll();
+  loadMarksForDate();
+}
+
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('show');
+  editingStudentId = null;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ===== Attendance logic =====
+async function loadMarksForDate() {
+  const date = document.getElementById('attendanceDate').value;
+  const lessonId = document.getElementById('lessonSelect').value;
+  attendanceCache = await getAll('attendance');
+  currentMarks = {};
+  attendanceCache
+    .filter(a => a.date === date && String(a.lessonId || '') === String(lessonId))
+    .forEach(a => currentMarks[a.studentId] = a.status);
+  renderAttendance();
+}
+
+async function setMark(studentId, status) {
+  const date = document.getElementById('attendanceDate').value;
+  const lessonId = document.getElementById('lessonSelect').value;
+  if (!date) { toast('Выберите дату'); return; }
+
+  const current = currentMarks[studentId];
+  const newStatus = current === status ? null : status;
+
+  const existing = attendanceCache.filter(a =>
+    a.date === date &&
+    String(a.lessonId || '') === String(lessonId) &&
+    a.studentId === studentId
+  );
+  for (const e of existing) await del('attendance', e.id);
+
+  if (newStatus) {
+    await add('attendance', {
+      date,
+      lessonId: lessonId || '',
+      studentId,
+      status: newStatus,
+      ts: Date.now()
+    });
+    currentMarks[studentId] = newStatus;
+  } else {
+    delete currentMarks[studentId];
+  }
+
+  attendanceCache = await getAll('attendance');
+  renderAttendance();
+  renderStudents();
+  renderPercent();
+  if (navigator.vibrate) { try { navigator.vibrate(15); } catch(e) {} }
+}
+
+async function markAll(status) {
+  const date = document.getElementById('attendanceDate').value;
+  const lessonId = document.getElementById('lessonSelect').value;
+  if (!date) { toast('Выберите дату'); return; }
+
+  const existing = attendanceCache.filter(a => a.date === date && String(a.lessonId || '') === String(lessonId));
+  for (const e of existing) await del('attendance', e.id);
+
+  for (const s of students) {
+    await add('attendance', { date, lessonId: lessonId || '', studentId: s.id, status, ts: Date.now() });
+    currentMarks[s.id] = status;
+  }
+  attendanceCache = await getAll('attendance');
+  renderAttendance();
+  renderStudents();
+  renderPercent();
+  toast(`Все отмечены как "${statusLabel(status)}"`);
+}
+
+async function clearMarks() {
+  const date = document.getElementById('attendanceDate').value;
+  const lessonId = document.getElementById('lessonSelect').value;
+  const existing = attendanceCache.filter(a => a.date === date && String(a.lessonId || '') === String(lessonId));
+  for (const e of existing) await del('attendance', e.id);
+  currentMarks = {};
+  attendanceCache = await getAll('attendance');
+  renderAttendance();
+  renderStudents();
+  renderPercent();
+  toast('Отметки сброшены');
+}
+
+function statusLabel(s) {
+  return s === 'present' ? 'присутствует' : s === 'late' ? 'опоздал' : 'отсутствует';
+}
+
+// ===== Students =====
+async function addStudent() {
+  const nameInput = document.getElementById('studentName');
+  const bdInput = document.getElementById('studentBirthday');
+  const phoneInput = document.getElementById('studentPhone');
+  const noteInput = document.getElementById('studentNote');
+
+  const name = nameInput.value.trim();
+  if (!name) { toast('Введите имя'); return; }
+
+  await add('students', {
+    name,
+    birthday: bdInput.value || '',
+    phone: phoneInput.value.trim(),
+    note: noteInput.value.trim()
+  });
+
+  nameInput.value = '';
+  bdInput.value = '';
+  phoneInput.value = '';
+  noteInput.value = '';
+
+  students = await getAll('students');
+  students.sort((a,b) => a.name.localeCompare(b.name, 'ru'));
+  renderAll();
+  toast('Студент добавлен');
+}
+
+// ===== Schedule =====
+async function addLesson() {
+  const name = document.getElementById('lessonName').value.trim();
+  const time = document.getElementById('lessonTime').value.trim();
+  const day = parseInt(document.getElementById('lessonDay').value);
+  if (!name) { toast('Введите название'); return; }
+  await add('lessons', { name, time, day });
+  document.getElementById('lessonName').value = '';
+  document.getElementById('lessonTime').value = '';
+  lessons = await getAll('lessons');
+  renderLessonSelect();
+  renderSchedule();
+  renderAttendance();
+  toast('Занятие добавлено');
+}
+
+async function removeLesson(id) {
+  if (!confirm('Удалить занятие?')) return;
+  await del('lessons', id);
+  lessons = await getAll('lessons');
+  renderLessonSelect();
+  renderSchedule();
+  renderAttendance();
+}
+
+// ===== Export/Import =====
+async function exportJSON() {
+  const data = {
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    students: await getAll('students'),
+    lessons: await getAll('lessons'),
+    attendance: await getAll('attendance')
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `attendance_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Файл сохранён');
+}
+
+function csvEscape(v) {
+  if (v === null || v === undefined) return '';
+  const s = String(v);
+  if (s.includes('"') || s.includes(',') || s.includes('\n') || s.includes(';')) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
+function exportCSV() {
+  if (students.length === 0) { toast('Нет студентов'); return; }
+  const headers = ['Имя', 'Дата рождения', 'Возраст', 'Телефон', 'Комментарий', 'Посещаемость %', 'Присутств.', 'Опоздал', 'Отсутств.', 'Всего занятий'];
+  const rows = students.map(s => {
+    const { pct, total, present, late, absent } = calcPercent(s.id);
+    return [
+      s.name || '',
+      s.birthday || '',
+      calcAge(s.birthday) ?? '',
+      s.phone || '',
+      s.note || '',
+      pct === null ? '' : pct,
+      present, late, absent, total
+    ];
+  });
+  const csv = '\uFEFF' + [headers, ...rows].map(r => r.map(csvEscape).join(';')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `students_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV сохранён');
+}
+
+async function importJSON(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!confirm('Импорт заменит все текущие данные. Продолжить?')) { e.target.value = ''; return; }
+  const text = await file.text();
+  try {
+    const data = JSON.parse(text);
+    await clearStore('students');
+    await clearStore('lessons');
+    await clearStore('attendance');
+    for (const s of data.students || []) {
+      const { id, ...rest } = s;
+      if (!('birthday' in rest)) rest.birthday = '';
+      if (!('phone' in rest)) rest.phone = '';
+      if (!('note' in rest)) rest.note = '';
+      await add('students', rest);
+    }
+    for (const l of data.lessons || []) {
+      const { id, ...rest } = l;
+      await add('lessons', rest);
+    }
+    for (const a of data.attendance || []) {
+      const { id, ...rest } = a;
+      await add('attendance', rest);
+    }
+    await loadAll();
+    renderLessonSelect();
+    renderAll();
+    loadMarksForDate();
+    toast('Данные импортированы');
+  } catch (err) {
+    alert('Ошибка: ' + err.message);
+  }
+  e.target.value = '';
+}
+
+async function clearAllData() {
+  if (!confirm('Удалить ВСЕ данные (студенты, расписание, отметки)?')) return;
+  await clearStore('students');
+  await clearStore('lessons');
+  await clearStore('attendance');
+  students = [];
+  lessons = [];
+  currentMarks = {};
+  attendanceCache = [];
+  renderLessonSelect();
+  renderAll();
+  toast('Всё удалено');
+}
+
+// ===== Utils =====
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+init().catch(err => {
+  console.error(err);
+  alert('Ошибка инициализации БД: ' + err.message);
+});
+</script>
+</body>
+</html>
